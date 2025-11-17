@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:4200',        
-    'https://ecom-test-nine-nu.vercel.app/'
+    'https://ecom-test-nine-nu.vercel.app'
   ],
   credentials: true
 }));
