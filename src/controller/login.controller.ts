@@ -7,7 +7,7 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const [rows]: any = await db.query("SELECT * FROM Users WHERE email = ?", [email]);
+    const [rows]: any = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
     if (!rows.length) {
       return res.status(404).json({ message: "User not found" });
