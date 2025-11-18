@@ -26,9 +26,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', loginRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
-
-const PORT = Number(process.env.PORT) || 3000;
-
+const PORT = Number(process.env.MYSQLPORT) || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log('Image path served from:', imagesPath);

@@ -10,4 +10,3 @@ export const db = mysql.createPool({
   connectionLimit: 10
 });
 export default db;
-

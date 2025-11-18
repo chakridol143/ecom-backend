@@ -8,38 +8,55 @@ export const register = async (req: Request, res: Response) => {
     const { name, email, password, phone, address } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "name, email, password are required" });
+      return res.status(400).json({ message: "Name, email, and password are required" });
     }
 
-    const [existing]: any = await db.query("SELECT user_id FROM Users WHERE email = ?", [email]);
+    // Check duplicate email
+    const [existing]: any = await db.query(
+      "SELECT user_id FROM users WHERE email = ?",
+      [email]
+    );
+
     if (existing.length) {
       return res.status(409).json({ message: "Email already registered" });
     }
 
+    // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
+    // Insert user
     const [result]: any = await db.query(
-      `INSERT INTO Users (name, email, password_hash, phone, address, role)
+      `INSERT INTO users (name, email, password_hash, phone, address, role)
        VALUES (?, ?, ?, ?, ?, 'customer')`,
-      [name, email, password_hash, phone || null, address || null]
+      [name, email, password_hash, phone ?? null, address ?? null]
     );
 
+    // Ensure JWT secret exists
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing in environment variables");
+    }
+
+    // Generate token
     const token = jwt.sign(
       { user_id: result.insertId, role: "customer" },
-      process.env.JWT_SECRET as string,
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     return res.status(201).json({
       message: "Registration successful",
-      user: { user_id: result.insertId, name, email, phone, address, role: "customer" },
+      user: {
+        user_id: result.insertId,
+        name,
+        email,
+        phone,
+        address,
+        role: "customer"
+      },
       token
     });
   } catch (err: any) {
-    if (err?.code === "ER_DUP_ENTRY") {
-      return res.status(409).json({ message: "Email already registered" });
-    }
-    console.error("REGISTER ERROR:", err);
-    return res.status(500).json({ message: "Server Error" });
+    console.error("REGISTER ERROR:", err.message || err);
+    return res.status(500).json({ message: "Server Error", error: err.message });
   }
 };

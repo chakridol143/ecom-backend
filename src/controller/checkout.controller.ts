@@ -33,7 +33,6 @@ export const checkout = async (req: Request, res: Response) => {
 
     const order_id = orderResult.insertId;
 
-    //  Prepare order items
     const orderItemsValues = items.map((item: any) => [
       order_id,
       item.product_id,
