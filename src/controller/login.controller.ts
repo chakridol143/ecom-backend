@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-
   try {
     const [rows]: any = await db.query("SELECT * FROM users WHERE email = ?", [email]);
 
