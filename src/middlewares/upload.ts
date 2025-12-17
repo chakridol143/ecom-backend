@@ -1,29 +1,4 @@
 
-// import multer from 'multer';
-// import path from 'path';
-// import fs from 'fs';
-// import { v4 as uuidv4 } from 'uuid';
-
-// const assetsDir = path.join(__dirname, '..', '..', 'assets', 'images');
-// if (!fs.existsSync(assetsDir)) fs.mkdirSync(assetsDir, { recursive: true });
-
-// const storage = multer.diskStorage({
-//   destination: (_req, _file, cb) => cb(null, assetsDir),
-//   filename: (_req, file, cb) => {
-//     const ext = path.extname(file.originalname) || '';
-//     cb(null, `${Date.now()}-${uuidv4()}${ext}`);
-//   }
-// });
-
-// export const uploadFields = multer({ storage }).fields([
-//   { name: 'image_url', maxCount: 1 },
-//   { name: 'image_url1', maxCount: 1 },
-//   { name: 'image_url2', maxCount: 1 },
-//   { name: 'image_url3', maxCount: 1 },
-//   { name: 'image_url4', maxCount: 1 }
-// ]);
-
-
 import multer from "multer";
 import path from "path";
 import fs from "fs";
