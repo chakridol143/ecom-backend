@@ -8,6 +8,8 @@ import cartRoutes from './routers/cart.routes';
 import checkoutRoutes from './routers/checkout.routes'
 import adminProducts from './routers/adminProducts';
 import adminCategories from './routers/adminCategories';
+import googleAuthRoutes from "./routers/googleAuth.routes";
+
 
 const app = express();
 
@@ -32,6 +34,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use('/api/admin/products', adminProducts);
 app.use('/api/admin/categories', adminCategories);
+app.use("/api/auth", googleAuthRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
