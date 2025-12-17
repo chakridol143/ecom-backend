@@ -8,7 +8,7 @@ import pool from "../config/db";
 export const getAll = async (_req: Request, res: Response) => {
   try {
     const [rows] = await pool.query(
-      "SELECT category_id, name, description FROM Categories"
+      "SELECT category_id, name, description FROM categories"
     );
     res.json(rows);
   } catch (err: any) {
@@ -21,7 +21,7 @@ export const getById = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     const [rows]: any = await pool.query(
-      "SELECT category_id, name, description FROM Categories WHERE category_id = ?",
+      "SELECT category_id, name, description FROM categories WHERE category_id = ?",
       [id]
     );
 
@@ -66,7 +66,7 @@ export const getCategoriesWithProducts = async (_req: Request, res: Response) =>
         p.description,
         p.price,
         p.image_url AS product_image
-      FROM Categories c
+      FROM categories c
       LEFT JOIN products p ON c.category_id = p.category_id
     `);
 
@@ -108,7 +108,7 @@ export const create = async (req: Request, res: Response) => {
   try {
     const { name, description = null } = req.body;
     const [result]: any = await pool.query(
-      "INSERT INTO Categories (name, description) VALUES (?, ?)",
+      "INSERT INTO categories (name, description) VALUES (?, ?)",
       [name, description]
     );
     res.status(201).json({ success: true, insertId: result.insertId });
@@ -123,7 +123,7 @@ export const update = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const { name, description = null } = req.body;
     await pool.query(
-      "UPDATE Categories SET name = ?, description = ? WHERE category_id = ?",
+      "UPDATE categories SET name = ?, description = ? WHERE category_id = ?",
       [name, description, id]
     );
     res.json({ success: true });
@@ -137,7 +137,7 @@ export const remove = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     await pool.query("DELETE FROM product_categories WHERE category_id = ?", [id]);
-    await pool.query("DELETE FROM Categories WHERE category_id = ?", [id]);
+    await pool.query("DELETE FROM categories WHERE category_id = ?", [id]);
     res.json({ success: true });
   } catch (err: any) {
     console.error("remove error:", err);
@@ -153,7 +153,7 @@ export const getForProduct = async (req: Request, res: Response) => {
   try {
     const productId = Number(req.params.productId);
     const [rows] = await pool.query(
-      `SELECT c.* FROM Categories c
+      `SELECT c.* FROM categories c
        JOIN product_categories pc ON c.category_id = pc.category_id
        WHERE pc.product_id = ?`,
       [productId]
