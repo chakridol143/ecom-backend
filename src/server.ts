@@ -13,12 +13,21 @@ import googleAuthRoutes from "./routers/googleAuth.routes";
 
 const app = express();
 
+/* Required for Google Popup Login */
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+  next();
+});
+
 app.use(cors({
   origin: [
     "https://ecom-test-nine-nu.vercel.app",
     "http://localhost:4200",
     "https://accounts.google.com",
-    "https://oauth2.googleapis.com"
+    "https://oauth2.googleapis.com",
+    "https://www.gstatic.com",
+    "https://gstatic.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -27,15 +36,13 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve images
 const imagesPath = join(__dirname, '../assets/images');
 app.use('/assets/images', express.static(imagesPath));
 
-// API routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/auth', loginRoutes);
-app.use('/api/auth', googleAuthRoutes); // ✅ Google route
+app.use('/api/auth', googleAuthRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/admin/products', adminProducts);
