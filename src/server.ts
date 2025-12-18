@@ -16,7 +16,9 @@ const app = express();
 app.use(cors({
   origin: [
     "https://ecom-test-nine-nu.vercel.app",
-    "http://localhost:4200"
+    "http://localhost:4200",
+    "https://accounts.google.com",
+    "https://oauth2.googleapis.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
