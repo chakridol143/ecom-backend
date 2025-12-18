@@ -1,21 +1,26 @@
 import express from 'express';
 import cors from 'cors';
 import path, { join } from 'path';
+
 import categoryRoutes from './routers/category.routes';
 import productRoutes from './routers/product.routes';
 import loginRoutes from './routers/login.routes';
 import cartRoutes from './routers/cart.routes';
-import checkoutRoutes from './routers/checkout.routes'
+import checkoutRoutes from './routers/checkout.routes';
 import adminProducts from './routers/adminProducts';
 import adminCategories from './routers/adminCategories';
+import googleAuthRoutes from "./routers/googleAuth.routes";
 
 const app = express();
 
-// ⭐ ENABLE CORS BEFORE ROUTES ⭐
 app.use(cors({
-  origin: "*", // OR ["http://localhost:4200"]
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
+  origin: [
+    "https://ecom-test-nine-nu.vercel.app",
+    "http://localhost:4200"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 app.use(express.json());
@@ -28,8 +33,9 @@ app.use('/assets/images', express.static(imagesPath));
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/auth', loginRoutes);
-app.use("/api/cart", cartRoutes);
-app.use("/api/checkout", checkoutRoutes);
+app.use('/api/auth', googleAuthRoutes); // ✅ Google route
+app.use('/api/cart', cartRoutes);
+app.use('/api/checkout', checkoutRoutes);
 app.use('/api/admin/products', adminProducts);
 app.use('/api/admin/categories', adminCategories);
 
