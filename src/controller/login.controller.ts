@@ -7,7 +7,10 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const [rows]: any = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [rows]: any = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
 
     if (!rows.length) {
       return res.status(404).json({ message: "User not found" });
@@ -22,6 +25,13 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid Credentials" });
     }
 
+    // ⛔ BLOCK LOGIN IF EMAIL NOT CONFIRMED
+    if (!user.EmailConfirmed) {
+      return res
+        .status(403)
+        .json({ message: "Please verify your email before logging in" });
+    }
+
     const token = jwt.sign(
       { user_id: user.user_id, role: user.role },
       process.env.JWT_SECRET!,
@@ -29,9 +39,10 @@ export const login = async (req: Request, res: Response) => {
     );
 
     return res.json({ message: "Login Successful", token, user });
-
   } catch (error: any) {
     console.log("LOGIN ERROR:", error);
-    return res.status(500).json({ message: "Server Error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: error.message });
   }
 };
