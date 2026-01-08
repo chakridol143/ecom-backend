@@ -15,7 +15,7 @@ export const register = async (req: Request, res: Response) => {
 
     // 2️⃣ Check if user exists
     const [existing]: any = await db.query(
-      "SELECT user_id FROM users WHERE email = ?", 
+      "SELECT user_id FROM users WHERE email = ?",
       [email]
     );
 
@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response) => {
     // 3️⃣ Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // 4️⃣ Save user with EmailConfirmed = 0
+    // 4️⃣ Insert user
     const [result]: any = await db.query(
       `INSERT INTO users (name, email, password_hash, phone, address, role, EmailConfirmed)
        VALUES (?, ?, ?, ?, ?, 'customer', 0)`,
@@ -44,21 +44,26 @@ export const register = async (req: Request, res: Response) => {
       [userId, token]
     );
 
-    // 6️⃣ Build link sent to email
     const confirmUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
 
-    // 7️⃣ Send email
-    await mailer.sendMail({
+    // ✅ 6️⃣ RESPOND IMMEDIATELY (DO NOT WAIT FOR EMAIL)
+    res.status(201).json({
+      message: "Registration successful. Please check your email to verify.",
+      user_id: userId
+    });
+
+    // ✅ 7️⃣ SEND EMAIL IN BACKGROUND (NON-BLOCKING)
+    mailer.sendMail({
       from: process.env.SMTP_USER,
       to: email,
       subject: "Confirm your email",
-      html: `Click here to verify: <a href="${confirmUrl}">${confirmUrl}</a>`
-    });
-
-    // 8️⃣ Respond to frontend
-    return res.status(201).json({
-      message: "Registration successful. Please check your email to verify.",
-      user_id: userId
+      html: `
+        <h3>Welcome!</h3>
+        <p>Please verify your email:</p>
+        <a href="${confirmUrl}">${confirmUrl}</a>
+      `
+    }).catch(err => {
+      console.error("EMAIL SEND ERROR:", err);
     });
 
   } catch (err) {
