@@ -50,7 +50,8 @@ export const register = async (req: Request, res: Response) => {
       [userId, token]
     );
 
-    const confirmUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
+    const confirmUrl =
+      `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
 
     // 6️⃣ Respond immediately (FAST UX)
     res.status(201).json({
@@ -58,10 +59,10 @@ export const register = async (req: Request, res: Response) => {
       user_id: userId
     });
 
-    // 7️⃣ Send email using RESEND (NON-BLOCKING)
+    // 7️⃣ Send email in background (NON-BLOCKING)
     sendVerificationEmail(email, confirmUrl)
       .then(() => {
-        console.log("Verification email sent:", email);
+        console.log("Verification email sent to:", email);
       })
       .catch(err => {
         console.error("EMAIL SEND ERROR:", err);
